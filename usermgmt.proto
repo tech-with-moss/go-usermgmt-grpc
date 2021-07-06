@@ -3,6 +3,8 @@ syntax = "proto3";
 
 package usermgmt;
 
+option go_package = "github.com/tech-with-moss/go-usermgmt-grpc;go_usermgmt_grpc";
+
 service UserManagement {
   rpc CreateNewUser (NewUser) returns (User) {}
 }
