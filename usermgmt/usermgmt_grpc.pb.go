@@ -19,7 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserManagementClient interface {
 	CreateNewUser(ctx context.Context, in *NewUser, opts ...grpc.CallOption) (*User, error)
-	GetUsers(ctx context.Context, in *GetUsersParams, opts ...grpc.CallOption) (*Users, error)
+	GetUsers(ctx context.Context, in *GetUsersParams, opts ...grpc.CallOption) (*UsersList, error)
 }
 
 type userManagementClient struct {
@@ -39,8 +39,8 @@ func (c *userManagementClient) CreateNewUser(ctx context.Context, in *NewUser, o
 	return out, nil
 }
 
-func (c *userManagementClient) GetUsers(ctx context.Context, in *GetUsersParams, opts ...grpc.CallOption) (*Users, error) {
-	out := new(Users)
+func (c *userManagementClient) GetUsers(ctx context.Context, in *GetUsersParams, opts ...grpc.CallOption) (*UsersList, error) {
+	out := new(UsersList)
 	err := c.cc.Invoke(ctx, "/usermgmt.UserManagement/getUsers", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func (c *userManagementClient) GetUsers(ctx context.Context, in *GetUsersParams,
 // for forward compatibility
 type UserManagementServer interface {
 	CreateNewUser(context.Context, *NewUser) (*User, error)
-	GetUsers(context.Context, *GetUsersParams) (*Users, error)
+	GetUsers(context.Context, *GetUsersParams) (*UsersList, error)
 	mustEmbedUnimplementedUserManagementServer()
 }
 
@@ -64,7 +64,7 @@ type UnimplementedUserManagementServer struct {
 func (UnimplementedUserManagementServer) CreateNewUser(context.Context, *NewUser) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateNewUser not implemented")
 }
-func (UnimplementedUserManagementServer) GetUsers(context.Context, *GetUsersParams) (*Users, error) {
+func (UnimplementedUserManagementServer) GetUsers(context.Context, *GetUsersParams) (*UsersList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUsers not implemented")
 }
 func (UnimplementedUserManagementServer) mustEmbedUnimplementedUserManagementServer() {}
@@ -133,5 +133,5 @@ var UserManagement_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "usermgmt.proto",
+	Metadata: "usermgmt/usermgmt.proto",
 }
