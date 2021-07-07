@@ -24,11 +24,11 @@ func main() {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	var new_users = make(map[string]int)
+	var new_users = make(map[string]int32)
 	new_users["Alice"] = 43
 	new_users["Bob"] = 30
 	for name, age := range new_users {
-		r, err := c.CreateNewUser(ctx, &pb.NewUser{Name: name, Age: int32(age)})
+		r, err := c.CreateNewUser(ctx, &pb.NewUser{Name: name, Age: age})
 		if err != nil {
 			log.Fatalf("could not create user: %v", err)
 		}
