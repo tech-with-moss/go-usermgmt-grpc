@@ -7,6 +7,7 @@ option go_package = "github.com/tech-with-moss/go-usermgmt-grpc;go_usermgmt_grpc
 
 service UserManagement {
   rpc CreateNewUser (NewUser) returns (User) {}
+  rpc getUsers (getUsersParams) returns (Users) {}
 }
 
 message NewUser {
@@ -19,4 +20,13 @@ message User {
   int32 age = 2;
   int32 id = 3; 
 }
+
+message getUsersParams {
+
+}
+
+message Users {
+  repeated User users = 1; 
+}
+
 
