@@ -41,7 +41,7 @@ func (c *userManagementClient) CreateNewUser(ctx context.Context, in *NewUser, o
 
 func (c *userManagementClient) GetUsers(ctx context.Context, in *GetUsersParams, opts ...grpc.CallOption) (*UsersList, error) {
 	out := new(UsersList)
-	err := c.cc.Invoke(ctx, "/usermgmt.UserManagement/getUsers", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/usermgmt.UserManagement/GetUsers", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +108,7 @@ func _UserManagement_GetUsers_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/usermgmt.UserManagement/getUsers",
+		FullMethod: "/usermgmt.UserManagement/GetUsers",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserManagementServer).GetUsers(ctx, req.(*GetUsersParams))
@@ -128,7 +128,7 @@ var UserManagement_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserManagement_CreateNewUser_Handler,
 		},
 		{
-			MethodName: "getUsers",
+			MethodName: "GetUsers",
 			Handler:    _UserManagement_GetUsers_Handler,
 		},
 	},
