@@ -54,7 +54,7 @@ func (server *UserManagementServer) CreateNewUser(ctx context.Context, in *pb.Ne
 		  age int
 		);
 	  `
-		_, err := server.conn.Exec(context.Background(), createSql)
+		_, err := server.conn.Exec(createSql)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Table creation failed: %v\n", err)
 			os.Exit(1)
@@ -68,12 +68,12 @@ func (server *UserManagementServer) CreateNewUser(ctx context.Context, in *pb.Ne
 	//var users_list *pb.UsersList = &pb.UsersList{}
 	var user_id = int32(rand.Intn(1000))
 	created_user := &pb.User{Name: in.GetName(), Age: in.GetAge(), Id: user_id}
-	tx, err := server.conn.Begin(context.Background())
+	tx, err := server.conn.Begin()
 	if err != nil {
 		log.Fatalf("conn.Begin failed: %v", err)
 	}
 
-	_, err = tx.Exec(context.Background(), "insert into users values ($1,$2,$3)",
+	_, err = tx.Exec("insert into users values ($1,$2,$3)",
 		created_user.Id, created_user.Name, created_user.Age)
 	if err != nil {
 		log.Fatalf("tx.Exec failed: %v", err)
@@ -96,8 +96,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("Unable to establish connection: %v", err)
 	}
-	defer conn.Close(context.Background())
-	user_mgmt_server.conn = &conn
+	defer conn.Close()
+	user_mgmt_server.conn = conn
 	user_mgmt_server.first_user_creation = false
 	if err := user_mgmt_server.Run(); err != nil {
 		log.Fatalf("failed to serve: %v", err)
