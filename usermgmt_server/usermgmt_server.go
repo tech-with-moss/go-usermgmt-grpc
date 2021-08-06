@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"math/rand"
 	"net"
 	"os"
 
@@ -44,27 +43,24 @@ func (server *UserManagementServer) Run() error {
 //userlist struct, then append new user and write new userlist back to file
 func (server *UserManagementServer) CreateNewUser(ctx context.Context, in *pb.NewUser) (*pb.User, error) {
 
-	if server.first_user_creation {
-		createSql := `
-		create table users(
-		  id SERIAL PRIMARY KEY,
-		  name text,
-		  age int
-		);
-	  `
-		_, err := server.conn.Exec(context.Background(), createSql)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Table creation failed: %v\n", err)
-			os.Exit(1)
-		}
-
-		server.first_user_creation = false
+	createSql := `
+	create table if not exists users(
+		id SERIAL PRIMARY KEY,
+		name text,
+		age int
+	);
+	`
+	_, err := server.conn.Exec(context.Background(), createSql)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Table creation failed: %v\n", err)
+		os.Exit(1)
 	}
+
+	server.first_user_creation = false
 
 	log.Printf("Received: %v", in.GetName())
 
-	var user_id = int32(rand.Intn(1000))
-	created_user := &pb.User{Name: in.GetName(), Age: in.GetAge(), Id: user_id}
+	created_user := &pb.User{Name: in.GetName(), Age: in.GetAge()}
 	tx, err := server.conn.Begin(context.Background())
 	if err != nil {
 		log.Fatalf("conn.Begin failed: %v", err)
@@ -86,6 +82,7 @@ func (server *UserManagementServer) GetUsers(ctx context.Context, in *pb.GetUser
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 	for rows.Next() {
 		user := pb.User{}
 		err = rows.Scan(&user.Id, &user.Name, &user.Age)
