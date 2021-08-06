@@ -71,6 +71,7 @@ func (server *UserManagementServer) CreateNewUser(ctx context.Context, in *pb.Ne
 	if err != nil {
 		log.Fatalf("tx.Exec failed: %v", err)
 	}
+	tx.Commit(context.Background())
 	return created_user, nil
 
 }
